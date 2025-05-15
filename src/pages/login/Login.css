@@ -1,0 +1,76 @@
+/* Mãe de todos:*/
+
+.mae_de_todas{
+display: flex;
+height: 100vh;
+}
+
+/* Banner da esquerda:*/
+.banner{
+flex: 1;
+    background-image: url(../../assets/img/fundoLogin.png);
+    /*modificar algumas caracteristicas da imagem */
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Form de login da direita:*/
+.section_login{
+    flex: 1;
+    display: flex;
+    background-color: #CC3F55;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.section_login img{
+    width: 370px;
+}
+.form_login{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    width: 70%;
+    
+    justify-content: space-around;
+}
+.campos_login{
+    height: 57% ;
+}
+.form_login h1{
+    /*Vai deixar o texto maiusculas*/
+    text-transform: uppercase;
+}
+.campo_imput{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 17%;
+}
+.campos_login{
+    width: 100%;
+}
+
+.campo_imput input{
+   border-radius: 5px;
+   height: 38px;
+   padding: 1px 10px;
+   border: none;
+   margin-top: 7px;
+   outline: none;
+   box-shadow: 1px 4px 4px 0px #00000081;
+}
+
+/*responsividade*/ 
+
+/*me de algumas caracteristicas de tela */
+
+@media screen and (max-width: 768px) {
+    /*0px -> 768px*/
+    .banner{
+        display: none;
+    }
+
+}
