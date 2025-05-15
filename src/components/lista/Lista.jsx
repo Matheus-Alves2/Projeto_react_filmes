@@ -25,12 +25,25 @@ const Lista = (props) => {
                     </thead>
                     {/* tbody => Corpo da Tabela */}
                     <tbody >
-                        <tr className="item_lista">
-                            <td data-cell="Nome"> xxxxxx </td>
+                        {/*Verificar sea lista vai vir vazia*/}
+                        {props.lista && props.lista.length > 0 ? (
+                            //vampos mapear aos intens da lista
+                            props.lista.map((item) => (
+                            <tr className="item_lista" key={item.idGenero}>
+                            <td data-cell="Nome" >{item.nome}</td>
+                            <td data-cell="Nome"> xxxxxx </td>  
                             <td data-cell="Gênero" style={{display:props.visi_lista}}> Terror </td>
                             <td data-cell="Editar"><img src={Editar} alt="" /></td>
-                            <td data-cell="Excluir"><img src={Excluir} alt="" /></td>
+                            <td data-cell="Excluir"><img src={Excluir} alt="Excluir" onClick={props.functionExcluir} />
+                            </td>
+                            
                         </tr>
+                        ))
+                        )  :
+                        (
+                            <p>Nenhum genero foi encontrado.</p>
+                        )
+                    }
                     </tbody>
                 </table>
             </div>
