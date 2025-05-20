@@ -15,7 +15,6 @@ import { Await } from "react-router-dom";
 
 
 const CadastroGenero = () => {
-
   //nome do genero
   const [genero, setGenero] = useState("");
   const [listaGenero, setListaGenero] = useState([]);
@@ -127,6 +126,28 @@ swalWithBootstrapButtons.fire({
     }
   }
 
+  async function editarGenero(id) {
+    const { value: novoGenero } = await Swal.fire({
+    title: "Modifique seu Genero",
+    input: "text",
+    inputLabel: "Novo genero",
+    inputValue: id. nome,
+    showCancelButton: true,
+    inputValidator: (value) => {
+    if (!value) {
+      return "O campo não pode estar vazio pequeno gafanhoto!";
+    }
+  }
+});
+if (novoGenero) {
+  try {
+    api.put(`genero/${genero.idDoGenero}`);
+    Swal.fire(`O genero modificado ${novoGenero}`, {none: novoGenero});
+  } catch (error) {
+    console.log(error);
+  }
+}
+  }
 
   //  //Teste
   //   useEffect(() => {
@@ -156,14 +177,14 @@ swalWithBootstrapButtons.fire({
           placeholder="Genero"
 
 
+          valorInput = {filme}
+          setValorInput = {setFilme}
           //Atribuindo a funcao:
           funcCadastro={cadastrarGenero}
 
-          //Atribuindo o valor ao input:
-          valorInput={genero}
-
           //Atribuindo a funcao que atualiza meu genero:
-          setValorInput={setGenero}
+          valorSelect={genero}
+          setValorSelect={setGenero}
 
         />
 
@@ -172,7 +193,7 @@ swalWithBootstrapButtons.fire({
 
           //atribuir para lista, o meu estado atual:
           lista={listaGenero}
-
+          funcEditar={editarGenero}
           onExcluir={excluirGenero}
         />
 

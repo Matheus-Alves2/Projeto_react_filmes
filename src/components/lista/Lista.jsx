@@ -35,9 +35,9 @@ const Lista = (props) => {
                                         {item.nome}
                                     </td>
                                     <td data-cell="Genero" style={{ display: props.visibilidade }}>Acao</td>
-                                    <td data-cell="Editar"><img src={Editar} alt="Caneta" /></td>
+                                    <td data-cell="Editar"><img src={Editar} alt="Caneta" onClick={() => {props.funcEditar(item)}} /></td>
                                     <td data-cell="Excluir"> 
-                                       
+                        
                                         <img src={Excluir} alt="Lixeira" onClick={() => props.onExcluir(item.idGenero)} style={{cursor:"pointer"}}/>
                                        
                                     </td>
