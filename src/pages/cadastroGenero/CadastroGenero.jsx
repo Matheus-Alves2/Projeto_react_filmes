@@ -1,121 +1,185 @@
-import Header from "../../components/header/Header";
-import Footer from "../../components/footer/Footer";
-import Lista from "../../components/lista/Lista";
-import Cadastro from "../../components/cadastro/Cadastro";
-import api from "../../Services/services";
-import Swal from "sweetalert2"
-//Importação de componentes ⬆
 import { useEffect, useState } from "react";
+import api from "../../Services/services";
+
+//Importar o sweet alert:
+import Swal from 'sweetalert2'
+
+// import { useEffect } from "react";
+
+// importacao de componentes:
+import Header from "../../components/header/Header";
+import Footer from "../../components/footer/Footer"
+import Cadastro from "../../components/cadastro/Cadastro";
+import Lista from "../../components/lista/Lista";
+import { Await } from "react-router-dom";
+
 
 const CadastroGenero = () => {
-    //funções ou constante são sempre criados fora do return, nunca dentro dele
-    const [genero, setGenero] = useState(""); //estate = genero (Estamos amarzenando a informação do input dentro de gênero)
-    const [listaGenero, setListaGenero] = useState([]);
-    const[deletaGenero, setDeletaGenero] = useState();
-    function alerta(icone, mensagem) {
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-        Toast.fire({
-            icon: icone,
-            title: mensagem
-        });
+
+  //nome do genero
+  const [genero, setGenero] = useState("");
+  const [listaGenero, setListaGenero] = useState([]);
+  const [excluiGenero, setExluirGenero] = useState();
+
+
+  function alerta(icone, mensagem) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+    Toast.fire({
+      icon: icone,
+      title: mensagem
+    });
+  }
+
+  // vai acontecer depois que eu clicar no botao cadastrar
+  async function cadastrarGenero(e) {
+    e.preventDefault();
+    //Verificar se o input esta vindo vazio
+    if (genero.trim() != "") {
+      //try => tentar(o esperado)
+      //catch => pega a exceção
+      try {
+        //cadastrar um gênero: post
+        await api.post("genero", { nome: genero })
+        alerta("success", "Cadastro realizado com sucesso!")
+        setGenero("")
+      }
+      catch (error) {
+        alerta("error", "Erro! Entre em contato com o suporte!")
+        console.log(error);
+      }
+    }
+    else {
+      alerta("error", "Erro! Campo vazio!")
     }
 
-    async function cadastrarGenero(evt) {
-        //verificar se o input está vindo vazio
-        //comédia romântica
-        evt.preventDefault();
-        if (genero.trim() != "") {
-            try {
-                await api.post("Genero", { nome: genero });
-                alerta("success", "Cadastro realizado com sucesso")
-                setGenero("");
+  }
 
-            } catch (error) {
-                alerta("error", "Erro! Entre em contato com os 7sg")
-            }
-        } else {
-            // alert("O campo precisa estar preenchido")
-            alerta("error", "Erro! Entre em contato com os 7sg")
-        }
+  //sicrono => acontece simultaneamente
+  //assicrono => Esperar algo/resposta para ir para outro bloco do
+  async function listarGenero() {
+    try {
+      //await -> Aguarde ter uma resp da solicitacao
+      const resposta = await api.get("genero");
+      // console.log(resposta.data[3].idGenero)
+      setListaGenero(resposta.data);
+    } catch (error) {
+      console.log(error);
 
-    };
-    //função Sícrona = acontece simultaneamente (vai seguindo os demais blocos de codigo ao mesmo tempo)
-    //função Assincrona = espera algo acontecer para depois seguir o codigo (espera um retorno da solicitação)
-    async function listarGenero() { //trycat
-        try {       // setListaGenero(resposta);
-            //.data = usado para listar somente os objetos
-            //teste o codigo e seja curioso
-
-            //console.log(resposta.data[3]);
-            //console.log(resposta.data[3].idGenero);
-            //console.log(resposta.data[3].nome);
-
-            const resposta = await api.get("genero");
-            setListaGenero(resposta.data)
-        } catch (error) {
-            console.log(error);
-        }
     }
-    //funcao de excluir o genero
-    async function excluirGenero(generoId) {
-        try {
-            console.log();
-            await api.delete('genero/${generoId.idGenero}')
-           alert("ebaa excluiu");
-            
-        } catch (error) {
-            
-        }
+  }
+
+  // funcao de excluir o genero;)
+
+  async function excluirGenero(idDoGenero) {
+    try {
+      const excluir = await api.delete(`genero/${idDoGenero}`);
+      
+      // Animacao quando aperta o excluir
+      setExluirGenero(excluir.data);
+      const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: "btn btn-success",
+    cancelButton: "btn btn-danger"
+  },
+  buttonsStyling: true
+});
+swalWithBootstrapButtons.fire({
+  title: "Voce tem certeza?",
+  text: "Nao vai ter volta!",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonText: "Sim",
+  cancelButtonText: "Nao",
+  reverseButtons: true
+}).then(async(result) => {
+  if (result.isConfirmed) {
+    swalWithBootstrapButtons.fire({
+      title: "Deletado!",
+      text: "Your file has been deleted.",
+      icon: "success"
+    });
+  } else if (
+    /* Read more about handling dismissals below */
+    result.dismiss === Swal.DismissReason.cancel
+  ) {
+    swalWithBootstrapButtons.fire({
+      title: "Cancelado",
+      text: "Your imaginary file is safe :)",
+      icon: "error"
+    });
+  }
+});
+
+          // --------------------------------- //
+    } catch (error) {
+      console.log(error);
+
     }
-//-----------------
+  }
+
+
+  //  //Teste
+  //   useEffect(() => {
+  //     console.log(genero);
+  //   },[genero]);
+  //   //Fim do teste
+
+
+  // Assim que a pagina renderizar, o metodo listarGenero() sera chamado
+  useEffect(() => {
+    listarGenero()
+
+  }, [listarGenero])
 
 
 
-    useEffect(() => {
-        listarGenero();
-
-    }, [])
 
 
+  return (
+    
+    <>
+      <Header />
+      <main>
 
-    return (
-        <>
-            <Header />
-            <main>
-                <Cadastro
-                    //atribuindo a função
-                    funcCadastro={cadastrarGenero}
-                    //atribuindo valor ao input
-                    valorInput={genero}
-                    //atribuindo a função que atualiza o meu gênero
-                    setValorInput={setGenero}
+        <Cadastro titulo="Cadastro de Genero"
+          visibilidade="none"
+          placeholder="Genero"
 
-                    tituloCadastro="Cadastro de Gênero"
-                    visibilidade="none" /*Faz o input de genero sumir, deixando só nome, para achar, é so ir lá em cadastro.jsx*/
-                    placeholder="gênero"
-                />
 
-                <Lista
-                    tituloLista="Lista de Gêneros"
-                    visivel="none" //Apaga Genero da lista
-                    //atribuiir para lista, o meu estado atual:
-                    lista = {listaGenero}
-                    functionExcluir = {excluirGenero}
-                />
-            </main>
-            <Footer />
-        </>
-    )
+          //Atribuindo a funcao:
+          funcCadastro={cadastrarGenero}
 
-};
+          //Atribuindo o valor ao input:
+          valorInput={genero}
+
+          //Atribuindo a funcao que atualiza meu genero:
+          setValorInput={setGenero}
+
+        />
+
+        <Lista titulo="Lista de Genero"
+          visibilidade="none"
+
+          //atribuir para lista, o meu estado atual:
+          lista={listaGenero}
+
+          onExcluir={excluirGenero}
+        />
+
+      </main>
+      <Footer />
+    </>
+
+  )
+}
 export default CadastroGenero;
